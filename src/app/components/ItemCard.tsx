@@ -3,7 +3,7 @@ import { GoChevronRight } from 'react-icons/go';
 import { FaTrash } from 'react-icons/fa';
 import { useEffect, useState } from "react";
 import { PrismaClient } from "@prisma/client";
-
+import {default as NextLink} from "next/link";
 
 
 interface Item {
@@ -104,6 +104,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
         </Text>
       </Box>
       <Box>
+        <NextLink href={`/card/${item.id}`} passHref>
+        
         <Avatar size="sm" title="Author" mb={2} src={item.userAvatar} />
         <Stack justify="space-between" direction={{ base: 'column', sm: 'row' }}>
           <Box>
@@ -138,6 +140,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
             </Button>
           </HStack>
         </Stack>
+        </NextLink>
       </Box>
 
       <Modal isOpen={isOpen} onClose={onClose}>
