@@ -4,16 +4,19 @@ import { FaTrash } from 'react-icons/fa';
 import { useEffect, useState } from "react";
 import { PrismaClient } from "@prisma/client";
 import {default as NextLink} from "next/link";
+import { GetServerSideProps } from "next";
+
+
 
 
 interface Item {
-  id: number;
-  tags: string[];
+  id?: number;
+  tags: string;
   title: string;
   content: string;
   userAvatar: string;
   username: string;
-  created_at: string;
+  created_at?: string;
 }
 
 interface ItemCardProps {
@@ -21,6 +24,11 @@ interface ItemCardProps {
   onSelect: (item: Item) => void;
   onDelete: (id: number) => void; // Adicione esta linha
 
+}
+
+const getCards = async () => {
+  const res = await fetch('localhost:3000/api/card')
+  return res.json()
 }
 
 
@@ -31,13 +39,24 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
   const [content, setContent] = useState(item.content);
   const [username, setUsername] = useState(item.username);
   const [createdAt, setCreatedAt] = useState(item.created_at);
+  const [items, setItems] = useState<Item[]>([]);
 
   const handleTitleChange = (value: string) => setTitle(value);
   const handleContentChange = (value: string) => setContent(value);
   const handleUsernameChange = (value: string) => setUsername(value);
   const handleCreatedAtChange = (value: string) => setCreatedAt(value);
 
+// função chamada na api 
+
+  const fetchItems = async () => {
+    const response = await fetch("/api/card");
+    const items: Item[] = await response.json();
+    setItems(items);
+  };
+
+
   useEffect(()=> {
+    fetchItems();
     setTitle(item.title);
     setContent(item.content);
     setUsername(item.username);
@@ -77,14 +96,14 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
       }}
       rounded="lg"
     >
-      <HStack spacing={2} mb={1}>
-        {item.tags.map((cat, index) => (
+     <HStack spacing={2} mb={1}>
+        {item.tags.split(',').map((tag, index) => (
           <Tag
             key={index}
             colorScheme={useColorModeValue('blackAlpha', 'gray')}
             borderRadius="full"
           >
-            {cat}
+            {tag}
           </Tag>
         ))}
       </HStack>
@@ -118,7 +137,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
           </Box>
           <HStack
             //as={Link}
-            spacing={4}
+            spacing={8}
             p={1}
             alignItems="center"
             height="2rem"
@@ -131,16 +150,17 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
             _hover={{ bg: useColorModeValue('gray.200', 'gray.700') }}
             onClick={onOpen}
             >
-          
+          </Link>
             <Text fontSize="sm"> Read more</Text>
-            </Link>
-            <GoChevronRight w={4} h={4} />
-            <Button onClick={() => onDelete(item.id)} colorScheme="pink" variant="outline" size="sm">
-              <FaTrash />
-            </Button>
+            
+            <GoChevronRight size={5}/>
+            
           </HStack>
         </Stack>
         </NextLink>
+        <Button onClick={() => onDelete(item.id)} colorScheme="pink" variant="outline" size="sm">
+              <FaTrash />
+            </Button>
       </Box>
 
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -178,12 +198,17 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
               />
               <FormLabel>Tags:</FormLabel>
               <HStack spacing={2} mb={1}>
-                  {item.tags.map((tag, index) => (
-                      <Tag key={index} colorScheme={useColorModeValue('blackAlpha', 'gray')} borderRadius="full">
-                          {tag}
-                      </Tag>
-                  ))}
+                {item.tags.split(',').map((tag, index) => (
+                  <Tag
+                    key={index}
+                    colorScheme={useColorModeValue('blackAlpha', 'gray')}
+                    borderRadius="full"
+                  >
+                    {tag.trim()} {/* Usamos trim() para remover quaisquer espaços em branco antes ou depois da tag */}
+                  </Tag>
+                ))}
               </HStack>
+
             </ModalBody>
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={onClose}>
@@ -200,3 +225,4 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
 };
 
 export default ItemCard;
+

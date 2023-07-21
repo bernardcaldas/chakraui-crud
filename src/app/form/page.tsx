@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Center,
@@ -16,27 +16,51 @@ import {
 } from "@chakra-ui/react";
 import ItemForm from "../components/ItemForm";
 import ItemCard from "../components/ItemCard";
+import { newItem } from "../components/ItemForm";
 
 interface Item {
+  id?: number;
+  tags: string;
   title: string;
   content: string;
-  tags: string[];
+  userAvatar: string;
   username: string;
-  avatarUrl: string;
-  createdAt: string;
+  created_at?: string;
 }
 
-const Home: React.FC = () => {
+async function getData() {
+  const res = await fetch('http://localhost:3000/api/card')
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+ 
+  // Recommendation: handle errors
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
+ 
+  return res.json()
+}
+
+
+export default function Home() {
+  
+  //const {items} = await getData()
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [items, setItems] = useState<Item[]>([]);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
-  const handleAddItem = (item: Item) => {
+  useEffect(() => {
+    (async () => {
+      const data = await getData();
+      setItems(data);
+    })();
+  }, []);
+
+  const handleAddItem = (item: newItem) => {
     setItems((prevItems) => [...prevItems, item]);
     setSelectedItem(item);
   };
-
- 
 
   const handleSelectItem = (updatedItem: Item) => {
     setItems(items.map(item => item.id === updatedItem.id ? updatedItem : item));
@@ -45,8 +69,28 @@ const Home: React.FC = () => {
   const handleDeleteItem = (id: number) => {
     setItems(prevItems => prevItems.filter(item => item.id !== id));
   };
+
+  async function deleteItem(id: number) {
+    try {
+      const response = await fetch(`/api/card/${id}`, {
+        method: 'DELETE',
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to delete item');
+      }
+  
+      const deletedItem = await response.json();  // only do this if you expect a response body
+      setItems(prevItems => prevItems.filter(item => item.id !== deletedItem.id));
+    } catch (error) {
+      console.error('Failed to delete item:', error);
+    }
+  }
+  
   
 
+  
+  
   return (
     <Center>
       <Box w="50%">
@@ -67,20 +111,11 @@ const Home: React.FC = () => {
         </Modal>
 
         <SimpleGrid columns={1} spacing="4">
-          {items.map((item, index) => (
-            <ItemCard key={index} item={item} onSelect={handleSelectItem} onDelete={handleDeleteItem} />
-
-          ))}
+                {items.filter(item => item.id !== undefined).map((item: Item, index: number) => (
+          <ItemCard key={index} item={item} onSelect={handleSelectItem} onDelete={deleteItem} />
+        ))}
         </SimpleGrid>
-        {/* {selectedItem && (
-          <Box mt="4">
-            <Heading size="md">Selected Item</Heading>
-            <p>{selectedItem.title}</p>
-          </Box>
-        )} */}
       </Box>
     </Center>
   );
-};
-
-export default Home;
+}

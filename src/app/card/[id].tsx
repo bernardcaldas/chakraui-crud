@@ -1,21 +1,32 @@
-import { GetServerSideProps } from 'next'
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { getCardById } from "../api/getCard";
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  // Aqui, você deve buscar os dados do card pelo ID (params.id)
-  const card = await getCardById(params.id)
+const CardPage = () => {
+  const router = useRouter();
+  const { id } = router.query;
 
-  return {
-    props: card,
+  const [card, setCard] = useState<Item | null>(null);
+
+
+  useEffect(() => {
+    if (id) {
+      getCardById(Number(id))
+        .then((data) => setCard(data))
+        .catch((error) => console.error(error));
+    }
+  }, [id]);
+
+  if (!card) {
+    return <div>Loading...</div>;
   }
-}
 
-const CardPage: React.FC<CardProps> = (props) => {
   return (
     <div>
-      <h2>{props.title}</h2>
-      <p>{props.content}</p>
+      <h1>{card.title}</h1>
+      <p>{card.content}</p>
     </div>
-  )
-}
+  );
+};
 
-export default CardPage
+export default CardPage;

@@ -1,8 +1,17 @@
 import React, { useState } from "react";
 import { Box, Button, FormControl, FormLabel, Input, Textarea } from "@chakra-ui/react";
 
+export interface newItem {
+  title: string;
+  tags: string;
+  content: string;
+  userAvatar: string;
+  username: string;
+  
+}
+
 interface ItemFormProps {
-  onSubmit: (item: Item) => void;
+  onSubmit: (item: newItem) => void;
 }
 
 const ItemForm: React.FC<ItemFormProps> = ({ onSubmit }) => {
@@ -13,16 +22,37 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit }) => {
   const [username, setUsername] = useState("");
   const [createdAt, setCreatedAt] = useState("");
 
-  const handleSubmit = () => {
-    onSubmit({
-      id: Math.random(), // This should be replaced with a real ID in a real application
-      title,
-      tags: tags.split(",").map(tag => tag.trim()), // Assume tags are entered as comma-separated values
-      content,
-      userAvatar,
-      username,
-      created_at: createdAt,
-    });
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch("/api/card", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          tags,
+          content,
+          userAvatar,
+          username,
+          created_at: createdAt,
+        }),
+      });
+  
+      if (response.ok) {
+        const createdItem = await response.json();
+        onSubmit(createdItem);
+  
+        setTitle("");
+        setTags("");
+        setContent("");
+        setUserAvatar("");
+        setUsername("");
+        setCreatedAt("");
+      } else {
+        console.error("Failed to create item:", response.status);
+      }
+    } catch (error) {
+      console.error("Failed to create item:", error);
+    }
   };
 
   return (
