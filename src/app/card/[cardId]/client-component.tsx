@@ -1,35 +1,51 @@
-// Dentro do diretório app/card/[cardId]/client-component.tsx
 'use client'
-
 import { useState } from 'react';
-import { Box, Button, Text, Avatar, HStack, Tag, Stack, Textarea, Input, FormLabel, FormControl } from '@chakra-ui/react';
+import { Box, Button, Text, Avatar, HStack, Tag, Stack, Textarea, Input, FormControl, FormLabel, useToast } from '@chakra-ui/react';
 
 export default function ClientComponent({ card }) {
-  const [contentState, setContentState] = useState(card.content);
-  const [titleState, setTitleState] = useState(card.title);
-  const [tagsState, setTagsState] = useState(card.tags);
-  const [usernameState, setUsernameState] = useState(card.username);
-  const [dateState, setDateState] = useState(card.created_at);
+  const [title, setTitle] = useState(card.title);
+  const [content, setContent] = useState(card.content);
+  const [username, setUsername] = useState(card.username);
+  const [createdAt, setCreatedAt] = useState(new Date(card.created_at).toISOString().split('T')[0]);
+  const [tags, setTags] = useState(card.tags);
+  const toast = useToast();
 
-  const handleContentChange = (event) => {
-    setContentState(event.target.value);
+  const handleTitleChange = (event) => setTitle(event.target.value);
+  const handleContentChange = (event) => setContent(event.target.value);
+  const handleUsernameChange = (event) => setUsername(event.target.value);
+  const handleCreatedAtChange = (event) => setCreatedAt(event.target.value);
+  const handleTagsChange = (event) => setTags(event.target.value);
+
+  const updateCard = async () => {
+    const response = await fetch('http://localhost:3000/api/card', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: card.id,
+        title: title,
+        content: content,
+        username: username,
+        created_at: createdAt,
+        tags: tags
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    } else {
+      // Se a resposta for OK, mostramos o toast
+      toast({
+        title: "Card updated.",
+        description: "Your changes have been saved.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      })
+    }
   };
 
-  const handleTitleChange = (event) => {
-    setTitleState(event.target.value);
-  };
-
-  const handleTagsChange = (event) => {
-    setTagsState(event.target.value);
-  };
-
-  const handleUsernameChange = (event) => {
-    setUsernameState(event.target.value);
-  };
-
-  const handleDateChange = (event) => {
-    setDateState(event.target.value);
-  };
 
   return (
     <Stack
@@ -45,7 +61,7 @@ export default function ClientComponent({ card }) {
       rounded="lg"
     >
       <HStack spacing={2} mb={1}>
-        {tagsState.split(',').map((tag, index) => (
+        {tags.split(',').map((tag, index) => (
           <Tag
             key={index}
             colorScheme='blue'
@@ -58,53 +74,31 @@ export default function ClientComponent({ card }) {
       <Box textAlign="left">
         <FormControl>
           <FormLabel>Title</FormLabel>
-          <Input 
-            fontSize="xl" 
-            fontWeight="bold"
-            value={titleState}
-            onChange={handleTitleChange}
-          />
+          <Input type="text" value={title} onChange={handleTitleChange} />
         </FormControl>
         <FormControl>
           <FormLabel>Content</FormLabel>
-          <Textarea
-            value={contentState}
-            onChange={handleContentChange}
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Tags</FormLabel>
-          <Input 
-            fontSize="sm" 
-            value={tagsState}
-            onChange={handleTagsChange}
-          />
+          <Textarea value={content} onChange={handleContentChange} />
         </FormControl>
         <FormControl>
           <FormLabel>Username</FormLabel>
-          <Input 
-            fontSize="sm" 
-            value={usernameState}
-            onChange={handleUsernameChange}
-          />
+          <Input type="text" value={username} onChange={handleUsernameChange} />
         </FormControl>
         <FormControl>
-          <FormLabel>Date</FormLabel>
-          <Input 
-            type="date"
-            fontSize="sm" 
-            value={dateState}
-            onChange={handleDateChange}
-          />
+          <FormLabel>Created at</FormLabel>
+          <Input type="date" value={createdAt} onChange={handleCreatedAtChange} placeholder={createdAt}/>
+        </FormControl>
+        <FormControl>
+          <FormLabel>Tags</FormLabel>
+          <Input type="text" value={tags} onChange={handleTagsChange} />
         </FormControl>
       </Box>
       <Box>
         <Avatar size="sm" title="Author" mb={2} src={card.userAvatar} />
-        <Text fontSize="sm" fontWeight="bold">{usernameState}</Text>
-        <Text fontSize="sm" color="gray.500">{new Date(dateState).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })}</Text>
+        <Text fontSize="sm" fontWeight="bold">{username}</Text>
+        <Text fontSize="sm" color="gray.500">{new Date(createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })}</Text>
       </Box>
-      // Adicione mais campos do card conforme necessário
-      <Button colorScheme="blue">Voltar</Button>
+      <Button colorScheme="blue" onClick={updateCard}>Salvar</Button>
     </Stack>
   );
 }

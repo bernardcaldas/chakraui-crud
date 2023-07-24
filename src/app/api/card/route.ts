@@ -52,25 +52,22 @@ export async function fetchCardById(id: number) {
   return card
 }
 
-// export async function fetchCardById(id: string) {
-//   const parsedId = parseInt(id, 10);
+export const PUT = async (request: Request) => {
+  const body: Item = await request.json();
+  const updated_at = new Date();
 
-//   if (isNaN(parsedId)) {
-//     throw new Error(`Cannot convert id to number: ${id}`);
-//   }
-
-//   const card = await prisma.item.findUnique({
-//     where: {
-//       id: parsedId,
-//     },
-//   });
-
-//   if (!card) {
-//     throw new Error(`No card found for id: ${id}`);
-//   }
-
-//   return card;
-// }
-
-
+  const updatedItem = await prisma.item.update({
+    where: { id: body.id },
+    data: {
+      title: body.title,
+      tags: body.tags,
+      content: body.content,
+      userAvatar: body.userAvatar,
+      username: body.username,
+      created_at: new Date(body.created_at),
+      //updated_at: updated_at,  // Adicionamos a data de atualização
+    },
+  });
+  return NextResponse.json(updatedItem, {status: 200});
+}
 
