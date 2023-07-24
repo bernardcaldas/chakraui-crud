@@ -126,41 +126,41 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
         <NextLink href={`/card/${item.id}`} passHref>
         
         <Avatar size="sm" title="Author" mb={2} src={item.userAvatar} />
-        <Stack justify="space-between" direction={{ base: 'column', sm: 'row' }}>
-          <Box>
-            <Text fontSize="sm" fontWeight="bold">
-              {item.username}
-            </Text>
-            <Text fontSize="sm" color="gray.500">
-              {item.created_at}
-            </Text>
-          </Box>
-          <HStack
-            //as={Link}
-            spacing={8}
-            p={1}
-            alignItems="center"
-            height="2rem"
-            w="max-content"
-            margin="auto 0"
-            rounded="md"
-          >
-            <Link
-            color="blue.400"
-            _hover={{ bg: useColorModeValue('gray.200', 'gray.700') }}
-            onClick={onOpen}
+          <Stack justify="space-between" direction={{ base: 'column', sm: 'row' }}>
+            <Box>
+              <Text fontSize="sm" fontWeight="bold">
+                {item.username}
+              </Text>
+              <Text fontSize="sm" color="gray.500">
+                {item.created_at}
+              </Text>
+            </Box>
+            <HStack
+              //as={Link}
+              spacing={8}
+              p={1}
+              alignItems="center"
+              height="2rem"
+              w="max-content"
+              margin="auto 0"
+              rounded="md"
             >
-          </Link>
-            <Text fontSize="sm"> Read more</Text>
-            
-            <GoChevronRight size={5}/>
-            
-          </HStack>
-        </Stack>
+                <Link
+                color="blue.400"
+                _hover={{ bg: useColorModeValue('gray.200', 'gray.700') }}
+                onClick={onOpen}
+                >
+              </Link>
+                <Text fontSize="sm"> Read more</Text>
+              
+              <GoChevronRight size={5}/>
+              
+            </HStack>
+          </Stack>
         </NextLink>
-        <Button onClick={() => onDelete(item.id)} colorScheme="pink" variant="outline" size="sm">
-              <FaTrash />
-            </Button>
+          <Button onClick={() => onDelete(item.id)} colorScheme="pink" variant="outline" size="sm">
+                <FaTrash />
+              </Button>
       </Box>
 
       <Modal isOpen={isOpen} onClose={onClose}>

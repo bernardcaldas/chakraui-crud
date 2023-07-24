@@ -34,3 +34,43 @@ export const DELETE = async (request: Request) => {
   });
   return NextResponse.json(deletedItem);
 }
+
+
+
+export async function fetchCardById(id: number) {
+  console.log(id)
+  const card = await prisma.item.findUnique({
+    where: {
+      id: id,
+    },
+  })
+
+  if (!card) {
+    throw new Error(`No card found for id: ${id}`)
+  }
+
+  return card
+}
+
+// export async function fetchCardById(id: string) {
+//   const parsedId = parseInt(id, 10);
+
+//   if (isNaN(parsedId)) {
+//     throw new Error(`Cannot convert id to number: ${id}`);
+//   }
+
+//   const card = await prisma.item.findUnique({
+//     where: {
+//       id: parsedId,
+//     },
+//   });
+
+//   if (!card) {
+//     throw new Error(`No card found for id: ${id}`);
+//   }
+
+//   return card;
+// }
+
+
+
