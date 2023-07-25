@@ -80,18 +80,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
     onClose();
   };
   
-  
-  const handleDelete = () => {
-    if (item.id) {
-      onDelete(item.id);
-    } else {
-      console.error('Item id is undefined');
-    }
-  };
-
-
-
-
 
   return (
     <Stack
@@ -172,9 +160,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
             </HStack>
           </Stack>
         </NextLink>
-          <Button onClick={handleDelete} colorScheme="pink" variant="outline" size="sm">
-                <FaTrash />
-              </Button>
       </Box>
 
       <Modal isOpen={isOpen} onClose={onClose}>
