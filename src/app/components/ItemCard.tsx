@@ -134,7 +134,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
                 {item.username}
               </Text>
               <Text fontSize="sm" color="gray.500">
-                {item.created_at}
+                
+                {item.created_at ? new Date(item.created_at).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
               </Text>
             </Box>
             <HStack
