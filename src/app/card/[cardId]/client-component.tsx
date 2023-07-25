@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Box, Button, Text, Avatar, HStack, Tag, Stack, Textarea, Input, FormControl, FormLabel, useToast } from '@chakra-ui/react';
 
 export default function ClientComponent({ card }) {
@@ -8,13 +9,16 @@ export default function ClientComponent({ card }) {
   const [username, setUsername] = useState(card.username);
   const [createdAt, setCreatedAt] = useState(new Date(card.created_at).toISOString().split('T')[0]);
   const [tags, setTags] = useState(card.tags);
+  const [userAvatar, setUserAvatar] = useState(card.userAvatar)
   const toast = useToast();
+  const router = useRouter()
 
   const handleTitleChange = (event) => setTitle(event.target.value);
   const handleContentChange = (event) => setContent(event.target.value);
   const handleUsernameChange = (event) => setUsername(event.target.value);
   const handleCreatedAtChange = (event) => setCreatedAt(event.target.value);
   const handleTagsChange = (event) => setTags(event.target.value);
+  const handleUserAvatarChange = (event) => setUserAvatar(event.target.value)
 
   const updateCard = async () => {
     const response = await fetch('http://localhost:3000/api/card', {
@@ -26,6 +30,7 @@ export default function ClientComponent({ card }) {
         id: card.id,
         title: title,
         content: content,
+        userAvatar: userAvatar,
         username: username,
         created_at: createdAt,
         tags: tags
@@ -46,6 +51,36 @@ export default function ClientComponent({ card }) {
     }
   };
 
+  const handleDelete = async () => {
+    // Verificando se o id do card é válido
+    if (!card.id) {
+      console.error('Card id is undefined');
+      return;
+    }
+  
+    // Fazendo a requisição para a API para deletar o card
+    const response = await fetch(`http://localhost:3000/api/card/${card.id}`, {
+      method: 'DELETE',
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to delete item');
+    }
+  
+    // Se a resposta for OK, mostramos um toast
+    toast({
+      title: "Card deleted.",
+      description: "The card has been deleted.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+  
+    // Redirecionando o usuário para a página inicial após a exclusão
+    //window.location.href = '/';
+    router.push('/form')
+  };
+  
 
   return (
     <Stack
@@ -92,13 +127,18 @@ export default function ClientComponent({ card }) {
           <FormLabel>Tags</FormLabel>
           <Input type="text" value={tags} onChange={handleTagsChange} />
         </FormControl>
+        <FormControl>
+          <FormLabel>User Avatar</FormLabel>
+          <Input type="text" value={userAvatar} onChange={handleUserAvatarChange} />
+        </FormControl>
       </Box>
       <Box>
         <Avatar size="sm" title="Author" mb={2} src={card.userAvatar} />
         <Text fontSize="sm" fontWeight="bold">{username}</Text>
         <Text fontSize="sm" color="gray.500">{new Date(createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })}</Text>
       </Box>
-      <Button colorScheme="blue" onClick={updateCard}>Salvar</Button>
+      <Button colorScheme="yellow" onClick={updateCard}>Alterar</Button>
+      <Button colorScheme="red" onClick={handleDelete}>Excluir</Button>
     </Stack>
   );
 }

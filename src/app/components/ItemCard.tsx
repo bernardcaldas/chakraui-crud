@@ -39,12 +39,14 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
   const [content, setContent] = useState(item.content);
   const [username, setUsername] = useState(item.username);
   const [createdAt, setCreatedAt] = useState(item.created_at);
+  const [userAvatar, setUserAvatar] = useState(item.userAvatar)
   const [items, setItems] = useState<Item[]>([]);
 
   const handleTitleChange = (value: string) => setTitle(value);
   const handleContentChange = (value: string) => setContent(value);
   const handleUsernameChange = (value: string) => setUsername(value);
   const handleCreatedAtChange = (value: string) => setCreatedAt(value);
+  const handleUserAvatarChange = (value: string) => setUserAvatar(value);
 
 // função chamada na api 
 
@@ -61,6 +63,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
     setContent(item.content);
     setUsername(item.username);
     setCreatedAt(item.created_at);
+    setUserAvatar(item.userAvatar);
     
   },[item])
 
@@ -70,11 +73,22 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
       title,
       content,
       username,
+      userAvatar,
       created_at: createdAt,
     };
     onSelect(updateItem);
     onClose();
   };
+  
+  
+  const handleDelete = () => {
+    if (item.id) {
+      onDelete(item.id);
+    } else {
+      console.error('Item id is undefined');
+    }
+  };
+
 
 
 
@@ -158,7 +172,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
             </HStack>
           </Stack>
         </NextLink>
-          <Button onClick={() => onDelete(item.id)} colorScheme="pink" variant="outline" size="sm">
+          <Button onClick={handleDelete} colorScheme="pink" variant="outline" size="sm">
                 <FaTrash />
               </Button>
       </Box>

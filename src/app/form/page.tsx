@@ -66,26 +66,39 @@ export default function Home() {
     setItems(items.map(item => item.id === updatedItem.id ? updatedItem : item));
   };
 
-  const handleDeleteItem = (id: number) => {
-    setItems(prevItems => prevItems.filter(item => item.id !== id));
-  };
+  // const deleteItem = async (id: Number) => {
+  //   const response = await fetch(`http://localhost:3000/api/card/${id}`, {
+  //     method: 'DELETE',
+  //   });
+  //   console.log(response); // Adicione isso aqui
+  
+  //   if (!response.ok) {
+  //     throw new Error(`Failed to delete item with id ${id}`);
+  //   }
+  
+  //   setItems(items.filter(item => item.id !== id));
+  // };
 
-  async function deleteItem(id: number) {
-    try {
-      const response = await fetch(`/api/card/${id}`, {
-        method: 'DELETE',
-      });
+  const deleteItem = async (id: Number) => {
+    const response = await fetch(`/api/card/${id}`, {
+      method: 'DELETE',
+    });
   
-      if (!response.ok) {
-        throw new Error('Failed to delete item');
-      }
+    console.log('Response:', response); // Adicione isso aqui
   
-      const deletedItem = await response.json();  // only do this if you expect a response body
-      setItems(prevItems => prevItems.filter(item => item.id !== deletedItem.id));
-    } catch (error) {
-      console.error('Failed to delete item:', error);
+    // Verifique se a resposta tem um corpo e, em caso afirmativo, registre-o.
+    if (response.headers.get('content-type')?.includes('application/json')) {
+      const responseBody = await response.json();
+      console.log('Response body:', responseBody);
     }
-  }
+  
+    if (!response.ok) {
+      throw new Error(`Failed to delete item with id ${id}`);
+    }
+  
+    setItems(items.filter(item => item.id !== id));
+  };
+ 
   
   
 
@@ -112,7 +125,7 @@ export default function Home() {
 
         <SimpleGrid columns={1} spacing="4">
                 {items.filter(item => item.id !== undefined).map((item: Item, index: number) => (
-          <ItemCard key={index} item={item} onSelect={handleSelectItem} onDelete={deleteItem} />
+          <ItemCard key={index} item={item} onSelect={handleSelectItem} onDelete={deleteItem}  />
         ))}
         </SimpleGrid>
       </Box>

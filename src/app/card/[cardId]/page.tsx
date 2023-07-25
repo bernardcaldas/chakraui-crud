@@ -16,6 +16,17 @@ export default async function CardPage({ params }: { params: { cardId: string } 
  
    const card = await fetchCardById(cardIdAsNumber);
 
+  //  const handleDelete = async (id: number) => {
+  //   // Fazendo a requisição para a API para deletar o card
+  //   const response = await fetch(`http://localhost:3000/api/card/${id}`, {
+  //     method: 'DELETE',
+  //   });
+  
+  //   if (!response.ok) {
+  //     throw new Error('Failed to delete item');
+  //   }
+  // }
+
   // return (
   //   <div>
   //     <h1>Title : {card.title}</h1>
@@ -27,5 +38,6 @@ export default async function CardPage({ params }: { params: { cardId: string } 
   //   </div>
 
   // );
-  return <ClientComponent card={card}/>
+  return <ClientComponent card={card} />
+
 }
