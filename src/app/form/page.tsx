@@ -13,10 +13,14 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Input,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
 import ItemForm from "../components/ItemForm";
 import ItemCard from "../components/ItemCard";
 import { newItem } from "../components/ItemForm";
+import { SearchIcon } from "@chakra-ui/icons";
 
 interface Item {
   id?: number;
@@ -46,6 +50,7 @@ async function getData() {
 export default function Home() {
   
   //const {items} = await getData()
+  const [searchQuery, setSearchQuery] = useState('')
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [items, setItems] = useState<Item[]>([]);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -98,19 +103,34 @@ export default function Home() {
   
     setItems(items.filter(item => item.id !== id));
   };
- 
-  
-  
 
-  
-  
+
+  const filteredItems = items.filter(item => 
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.tags.toLowerCase().includes(searchQuery.toLowerCase())
+
+    );
+ 
   return (
     <Center>
       <Box w="50%">
         <Heading mb="4">My Items</Heading>
         <Button onClick={onOpen} colorScheme="teal" mb="4">
-          Add Item
+          Add Item +
         </Button>
+        <InputGroup>
+          <Input 
+            placeholder="Search..."
+            value={searchQuery} 
+            onChange={event => setSearchQuery(event.target.value)}
+          />
+          <InputRightElement>
+            <SearchIcon color="gray.500" />
+          </InputRightElement>
+        </InputGroup>
+        
 
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
@@ -123,9 +143,9 @@ export default function Home() {
           </ModalContent>
         </Modal>
 
-        <SimpleGrid columns={1} spacing="4">
-                {items.filter(item => item.id !== undefined).map((item: Item, index: number) => (
-          <ItemCard key={index} item={item} onSelect={handleSelectItem} onDelete={deleteItem}  />
+        <SimpleGrid columns={1} spacing="4" mt={5}>
+            {filteredItems.filter(item => item.id !== undefined).map((item: Item, index: number) => (  // <--- ALTERE ISTO
+            <ItemCard key={index} item={item} onSelect={handleSelectItem} onDelete={deleteItem}  />
         ))}
         </SimpleGrid>
       </Box>

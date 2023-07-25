@@ -1,4 +1,4 @@
-import { Box, VStack, Stack, Link, Text, Tag, Avatar, useColorModeValue, HStack, Button, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, FormLabel } from "@chakra-ui/react";
+import { Box, VStack, Stack, Link, Text, Tag, Avatar, useColorModeValue, HStack, Button, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, FormLabel, Icon } from "@chakra-ui/react";
 import { GoChevronRight } from 'react-icons/go';
 import { FaTrash } from 'react-icons/fa';
 import { useEffect, useState } from "react";
@@ -125,7 +125,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
         </Text>
       </Box>
       <Box>
-        <NextLink href={`/card/${item.id}`} passHref>
+        
         
         <Avatar size="sm" title="Author" mb={2} src={item.userAvatar} />
           <Stack justify="space-between" direction={{ base: 'column', sm: 'row' }}>
@@ -138,29 +138,31 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
                 {item.created_at ? new Date(item.created_at).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
               </Text>
             </Box>
-            <HStack
-              //as={Link}
-              spacing={8}
-              p={1}
-              alignItems="center"
-              height="2rem"
-              w="max-content"
-              margin="auto 0"
-              rounded="md"
-            >
-                <Link
-                color="blue.400"
-                _hover={{ bg: useColorModeValue('gray.200', 'gray.700') }}
-                onClick={onOpen}
-                >
-              </Link>
-                <Text fontSize="sm"> Read more</Text>
-              
-              <GoChevronRight size={5}/>
-              
-            </HStack>
+            <NextLink href={`/card/${item.id}`} passHref>
+              <HStack
+                //as={Link}
+                spacing={8}
+                p={1}
+                alignItems="center"
+                height="2rem"
+                w="max-content"
+                margin="auto 0"
+                rounded="md"
+              >
+                  <Link
+                  color="blue.400"
+                  _hover={{ bg: useColorModeValue('gray.200', 'gray.700') }}
+                  onClick={onOpen}
+                  >
+                </Link>
+                
+                  <Text fontSize="sm"> Read more</Text>
+                  <Icon as={GoChevronRight} w={4} h={4} />
+                    
+              </HStack>
+            </NextLink> 
           </Stack>
-        </NextLink>
+        
       </Box>
 
       <Modal isOpen={isOpen} onClose={onClose}>
