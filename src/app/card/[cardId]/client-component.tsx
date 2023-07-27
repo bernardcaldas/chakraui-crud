@@ -4,7 +4,17 @@ import { useRouter } from 'next/navigation';
 import { Box, Button, Text, Avatar, HStack, Tag, Stack, Textarea, Input, FormControl, FormLabel, useToast, Center, Flex } from '@chakra-ui/react';
 import { AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay } from "@chakra-ui/react"
 
-export default function ClientComponent({ card }) {
+interface Card {
+  id?: number;
+  title: string;
+  content: string;
+  username: string;
+  created_at: string;
+  tags: string;
+  userAvatar: string;
+}
+
+export default function ClientComponent({ card }: {card: Card}) {
   const [title, setTitle] = useState(card.title);
   const [content, setContent] = useState(card.content);
   const [username, setUsername] = useState(card.username);
@@ -17,12 +27,12 @@ export default function ClientComponent({ card }) {
   const onClose = () => setIsOpen(false)
   const cancelRef = useRef(null)
 
-  const handleTitleChange = (event) => setTitle(event.target.value);
-  const handleContentChange = (event) => setContent(event.target.value);
-  const handleUsernameChange = (event) => setUsername(event.target.value);
-  const handleCreatedAtChange = (event) => setCreatedAt(event.target.value);
-  const handleTagsChange = (event) => setTags(event.target.value);
-  const handleUserAvatarChange = (event) => setUserAvatar(event.target.value)
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => setTitle(event.target.value);
+  const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => setContent(event.target.value);
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value);
+  const handleCreatedAtChange = (event: React.ChangeEvent<HTMLInputElement>) => setCreatedAt(event.target.value);
+  const handleTagsChange = (event: React.ChangeEvent<HTMLInputElement>) => setTags(event.target.value);
+  const handleUserAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => setUserAvatar(event.target.value)
 
   const updateCard = async () => {
     const response = await fetch('http://localhost:3000/api/card', {
