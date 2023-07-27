@@ -47,6 +47,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
   const handleUsernameChange = (value: string) => setUsername(value);
   const handleCreatedAtChange = (value: string) => setCreatedAt(value);
   const handleUserAvatarChange = (value: string) => setUserAvatar(value);
+  const colorScheme = useColorModeValue('blackAlpha', 'gray');
 
 // função chamada na api 
 
@@ -86,7 +87,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
       direction="column"
       spacing={4}
       p={4}
-      bg={useColorModeValue('gray.100', 'gray.800')}
+      bg={colorScheme}
       border="1px solid"
       borderColor="blue.100"
       _hover={{
@@ -102,7 +103,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
         {item.tags.split(',').map((tag, index) => (
           <Tag
             key={index}
-            colorScheme={useColorModeValue('blackAlpha', 'gray')}
+            colorScheme={colorScheme}
             borderRadius="full"
           >
             {tag}
@@ -145,7 +146,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
                 p={1}
                 alignItems="center"
                 height="2rem"
-                w="max-content"
                 margin="auto 0"
                 rounded="md"
               >
@@ -203,7 +203,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onDelete }) => {
                 {item.tags.split(',').map((tag, index) => (
                   <Tag
                     key={index}
-                    colorScheme={useColorModeValue('blackAlpha', 'gray')}
+                    colorScheme={colorScheme}
                     borderRadius="full"
                   >
                     {tag.trim()} {/* Usamos trim() para remover quaisquer espaços em branco antes ou depois da tag */}
