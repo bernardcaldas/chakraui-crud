@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, FormControl, FormLabel, Input, Textarea } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, Textarea, useToast } from "@chakra-ui/react";
 
 export interface newItem {
   title: string;
@@ -12,16 +12,17 @@ export interface newItem {
 
 interface ItemFormProps {
   onSubmit: (item: newItem) => void;
+  onClose: () => void
 }
 
-const ItemForm: React.FC<ItemFormProps> = ({ onSubmit }) => {
+const ItemForm: React.FC<ItemFormProps> = ({ onSubmit, onClose }) => {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState("");
   const [content, setContent] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
   const [username, setUsername] = useState("");
   const [createdAt, setCreatedAt] = useState("");
-
+  const toast = useToast()
   const handleSubmit = async () => {
     try {
       const response = await fetch("/api/card", {
@@ -47,6 +48,16 @@ const ItemForm: React.FC<ItemFormProps> = ({ onSubmit }) => {
         setUserAvatar("");
         setUsername("");
         setCreatedAt("");
+
+        toast({
+          title: "Item adicionado.",
+          description: "O item foi adicionado com sucesso.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+
+        onClose()
       } else {
         console.error("Failed to create item:", response.status);
       }

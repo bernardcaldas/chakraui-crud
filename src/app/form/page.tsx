@@ -114,7 +114,7 @@ export default function Home() {
     );
  
   return (
-    <Center>
+    <Center bg={"blackAlpha.10"}>
       <Box w="50%">
         <Heading mb="4">My Items</Heading>
         <Button onClick={onOpen} colorScheme="teal" mb="4">
@@ -138,7 +138,7 @@ export default function Home() {
             <ModalHeader>Add a new item</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <ItemForm onSubmit={handleAddItem} />
+              <ItemForm onSubmit={handleAddItem} onClose={onClose} />
             </ModalBody>
           </ModalContent>
         </Modal>
